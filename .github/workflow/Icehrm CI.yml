@@ -1,0 +1,43 @@
+name: NodeJS with Gulp
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Dependencies and Setup
+      run: |
+        npm install
+        npm run setup
+        npm run docker:build
+        npm run docker:start
+
+    - name: Build
+      run: |
+        npm install
+        gulp
+
+    - name: Run Cypress Tests
+      run: |
+        docker-compose -f docker-compose-testing.yaml up --exit-code-from cypress
+
+    - name: Cleanup
+      run: |
+        docker-compose -f docker-compose-testing.yaml down
