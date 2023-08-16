@@ -1,6 +1,6 @@
 {
   "name": "icehrm",
-  "version": "",
+  "version": "0.0.1",
   "description": "Simple HR Management",
   "main": "gulpfile.js",
   "directories": {
